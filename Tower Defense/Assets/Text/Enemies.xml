@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Enemies>
+  <Enemy Wave="1" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="1" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="1" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="1" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="1" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="1" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="1" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="2" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="2" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="2" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="2" EnemyName="Enemy" Type="0" Level="1" Wait="1.0"/>
+  <Enemy Wave="2" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="2" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="2" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="3" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="3" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="3" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="3" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+  <Enemy Wave="3" EnemyName="Enemy" Type="0" Level="2" Wait="1.0"/>
+</Enemies>
