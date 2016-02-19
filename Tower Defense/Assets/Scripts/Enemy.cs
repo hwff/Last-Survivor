@@ -84,6 +84,8 @@ public class Enemy : MonoBehaviour
                 Destroy(this.gameObject);    //this can be changed to an reusable source like the runner tutorial
                 Destroy(HPBar.gameObject);   //also resuable 
                 GameManager.instance.enemies.Remove(this.GetComponent<Enemy>());
+
+                Health.hp -= 1;
             }
             else
             {
@@ -116,6 +118,8 @@ public class Enemy : MonoBehaviour
             Destroy(this.gameObject);
             Destroy(HPBar.gameObject);
             GameManager.instance.enemies.Remove(this.GetComponent<Enemy>());
+
+            Gold.gold += 10;
         }
     }
 

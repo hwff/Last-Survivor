@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
         hero.GetComponent<Transform>().parent = mTransform;
         hero.GetComponent<Transform>().localPosition = new Vector3(0, 0, 0);
         hero.GetComponent<Hero>().id = 0;
-        //hero.GetComponent<Renderer>().material.renderQueue = 3003;
+        hero.GetComponent<Renderer>().material.renderQueue = 3003;
     }
 	
 	// Update is called once per frame

@@ -6,6 +6,8 @@ using System.Xml;
 
 public class UnitData
 {
+    public int x;
+    public int z;
     public int state;               //the state of a unit, “Empty(0)” means tower can be built, "Used(1)" means tower has been built on this unit, "NoTower(2)" means unit is not for tower. 
     public int type;                //the type of a unit, "Path(0)" means it can be walked through, whereas "Obstacle(1)" means cannot.
 }
@@ -26,8 +28,8 @@ public class Map : MonoBehaviour
 
     public Unit towerUnitPrefab;        //tower unit
     public Unit pathUnitPrefab;        //other unit
-    public Unit otherUnitPrefab;        //other unit
-    private Unit[,] mapUnits;                //all units on the map  
+
+    private Unit[] mapUnits;                //all units on the map  
 
     private int pathNum;                     //the number of nodes on the path
     public static PathNode startNode;
@@ -69,13 +71,10 @@ public class Map : MonoBehaviour
         List<UnitData> unitDatas = new List<UnitData>();
         ReadUnitsXml(unitDatas);
 
-        mapUnits = new Unit[numX, numZ];
-        for (int z = 0, i = 0; z < numZ; z++)
+        mapUnits = new Unit[unitDatas.Count];
+        for (int i = 0; i < unitDatas.Count; i++)
         {
-            for (int x = 0; x < numX; x++)
-            {
-                CreateUnit(x, z, unitDatas[i].state, unitDatas[i++].type);
-            }
+            CreateUnit(i, unitDatas[i].x, unitDatas[i].z, unitDatas[i].state, unitDatas[i].type);
         }
     }
 
@@ -89,14 +88,16 @@ public class Map : MonoBehaviour
         foreach (XmlNode node in nodes)
         {
             UnitData data = new UnitData();
-            data.state = int.Parse(node.Attributes[0].Value);
-            data.type = int.Parse(node.Attributes[1].Value);
+            data.x = int.Parse(node.Attributes[0].Value);
+            data.z = int.Parse(node.Attributes[1].Value);
+            data.state = int.Parse(node.Attributes[2].Value);
+            data.type = int.Parse(node.Attributes[3].Value);
 
             ud.Add(data);
         }
     }
 
-    private void CreateUnit(int x, int z, int state, int type)
+    private void CreateUnit(int i, int x, int z, int state, int type)
     {
         Unit newUnit;
         if (state == 0)
@@ -104,16 +105,12 @@ public class Map : MonoBehaviour
             newUnit = Instantiate(towerUnitPrefab) as Unit;
             towerNum++;
         }
-        else if (type == 0)
+        else
         {
             newUnit = Instantiate(pathUnitPrefab) as Unit;
         }
-        else
-        {
-            newUnit = Instantiate(otherUnitPrefab) as Unit;
-        }
 
-        mapUnits[x, z] = newUnit;
+        mapUnits[i] = newUnit;
         newUnit.name = "Map Unit " + x + ", " + z;
         newUnit.transform.parent = transform;  //set the parent of transform of each unit as the tranform of the map
         newUnit.transform.localScale = new Vector3(unitSizeX, unitSizeZ, 1.0f);

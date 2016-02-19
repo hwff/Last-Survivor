@@ -19,7 +19,8 @@ public class EnemySpawn : MonoBehaviour {
 
     private int idx;
     private float wait;
-    private int wave;
+
+    public static int wave;
 
     public GameObject[] enemyPrefabs;
 
@@ -43,6 +44,7 @@ public class EnemySpawn : MonoBehaviour {
     {
         ReadXml();
         wave = 1;
+        Wave.wave = wave;
         wait = 5.0f;
     }
 
@@ -63,6 +65,7 @@ public class EnemySpawn : MonoBehaviour {
             {
                 wait = data.wait;
                 wave = data.wave;
+                Wave.wave = wave;
                 CreateEnemy(data);
                 idx++;
             }

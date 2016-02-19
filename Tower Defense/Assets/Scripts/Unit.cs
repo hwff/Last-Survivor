@@ -58,6 +58,7 @@ public class Unit : MonoBehaviour {
             Indicator.isOn = false;
             Range.isOnTower = false;
         }
+        onType = UnitType.Obstacle;
     }
 
     void OnMouseDown()

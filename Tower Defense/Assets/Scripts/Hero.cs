@@ -40,7 +40,8 @@ public class Hero : MonoBehaviour
 
     private GameObject bullet;
 
-    private NavMeshAgent heroAgent;
+    private Vector3 destination;
+
     // Use this for initialization
     void Start()
     {
@@ -53,9 +54,6 @@ public class Hero : MonoBehaviour
         bulletSpeed = level * bulletSpeed_type * 0.8f;
         targeting = false;
         bulletFlying = false;
-
-        heroAgent = GetComponent<NavMeshAgent>();
-        heroAgent.speed = speed;
     }
 
     // Update is called once per frame
@@ -93,9 +91,15 @@ public class Hero : MonoBehaviour
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
             {
-                heroAgent.destination = hit.point;
+                destination = hit.point;
             }
         }
+
+        Vector3 curPos = GetComponent<Transform>().position;
+        Vector3 dir = (destination - curPos).normalized;
+        dir.y = dir.z;
+        dir.z = 0;
+        GetComponent<Transform>().Translate(dir * speed * Time.deltaTime);
     }
 
     private void Attack()
@@ -106,8 +110,8 @@ public class Hero : MonoBehaviour
             {
                 bullet = Instantiate(bulletPrefab) as GameObject;
                 Transform bTransform = bullet.GetComponent<Transform>();
-                bTransform.parent = GetComponent<Transform>().parent;
-                bTransform.localPosition = GetComponent<Transform>().localPosition;  //this number should be replace with variables, 1.8*1.5/2
+                bTransform.parent = transform;
+                bTransform.localPosition = new Vector3(0, 0, 0);  //this number should be replace with variables, 1.8*1.5/2
                 bTransform.localScale = new Vector3(0.6f, 0.6f, 1.0f);
                 bullet.GetComponent<Renderer>().material.renderQueue = 3002;
 
