@@ -38,14 +38,12 @@ public class Enemy : MonoBehaviour
         temp = ePos.y;
         ePos.y = ePos.z + 0.8f;
         ePos.z = -temp;
-        Debug.Log(ePos);
         HPBar = Instantiate(HPBarPrefab) as GameObject;
         Transform UITransform = GameObject.Find("UIManager").transform;
         Transform HPBTransform = HPBar.GetComponent<Transform>();
         HPBTransform.parent = UITransform;
         HPBTransform.localScale = new Vector3(0.02f, 0.04f, 1.0f);
         HPBTransform.localPosition = ePos;
-        //Debug.Log("HPB " + HPBTransform.position);
         HPBarSlider = HPBTransform.Find("HPBarSlider").GetComponent<Slider>();
         curNode = Map.startNode;
 

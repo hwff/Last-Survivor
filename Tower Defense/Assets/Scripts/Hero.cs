@@ -86,11 +86,7 @@ public class Hero : MonoBehaviour
     }
 
     private void Move()
-    {
-        Debug.Log("hero Pos " + GetComponent<Transform>().position);
-        Debug.Log("hero speed " + heroAgent.speed);
-        Debug.Log("hero dest " + heroAgent.destination);
-
+    { 
         if (Input.GetMouseButtonDown(0) && Unit.onType == UnitType.Path)
         {
             RaycastHit hit;

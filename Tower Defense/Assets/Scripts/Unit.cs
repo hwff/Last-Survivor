@@ -39,7 +39,6 @@ public class Unit : MonoBehaviour {
         onType = unitType;
         if (unitState != UnitState.NoTower)
         {
-            Debug.Log(unitState);
             Indicator.localpos = localpos;
             Indicator.isOn = true;
             if (unitState == UnitState.Used)
