@@ -12,14 +12,15 @@ public class Range : MonoBehaviour {
 	void Start () {
         isOnTower = false;
         this.GetComponent<Renderer>().enabled = false;
-	}
+        GetComponent<Renderer>().material.renderQueue = 2999;
+    }
 	
 	// Update is called once per frame
 	void Update () {
         if (isOnTower)
         {
             this.GetComponent<Transform>().localScale = new Vector3(2 * radius, 2 * radius, 1.0f);
-            this.GetComponent<Transform>().localPosition = localpos;         
+            this.GetComponent<Transform>().localPosition = localpos;
             this.GetComponent<Renderer>().enabled = true;
         }
         else

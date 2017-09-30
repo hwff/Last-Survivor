@@ -8,7 +8,7 @@ public class Gold : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		gold = 0;
+		gold = 300;
 	}
 
 	// Update is called once per frame

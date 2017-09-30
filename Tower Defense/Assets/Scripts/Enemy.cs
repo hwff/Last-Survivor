@@ -30,13 +30,14 @@ public class Enemy : MonoBehaviour
     private GameObject HPBar;
     private Slider HPBarSlider;  //a component attaching to the HPBarPrefab 
 
+    private bool fliped;
     // Use this for initialization
     void Start()
     {
         float temp;
         Vector3 ePos = this.GetComponent<Transform>().localPosition;    //z should have been adjusted
         temp = ePos.y;
-        ePos.y = ePos.z + 0.8f;
+        ePos.y = ePos.z + 3.2f;
         ePos.z = -temp;
         HPBar = Instantiate(HPBarPrefab) as GameObject;
         Transform UITransform = GameObject.Find("UIManager").transform;
@@ -46,8 +47,9 @@ public class Enemy : MonoBehaviour
         HPBTransform.localPosition = ePos;
         HPBarSlider = HPBTransform.Find("HPBarSlider").GetComponent<Slider>();
         curNode = Map.startNode;
+        //Debug.Log("start "+GetComponent<Transform>().localScale);
 
-        this.GetComponent<Renderer>().material.renderQueue = 3000;
+        //this.GetComponent<Renderer>().material.renderQueue = 3000;
         targeted = new bool[Map.towerNum + 1];
     }
 
@@ -76,7 +78,7 @@ public class Enemy : MonoBehaviour
         Vector3 nextPos = curNode.next.position;
 
         float dist = Vector3.Distance(curPos, nextPos);
-        if (dist < 0.1f)
+        if (dist < 0.3f)
         {
             if (curNode.next.next == null)
             {
@@ -90,6 +92,16 @@ public class Enemy : MonoBehaviour
             else
             {
                 curNode = curNode.next;
+                Vector3 scale = GetComponent<Transform>().localScale;
+                Vector3 d = curNode.next.position - GetComponent<Transform>().localPosition;
+                if (d.x < 0 && scale.x < 0)
+                {
+                    GetComponent<Transform>().Rotate(0, 180, 0);
+                }
+                else if (d.x > 0 && scale.x > 0)
+                {
+                    GetComponent<Transform>().Rotate(0, 180, 0);
+                }
             }
         }
 
@@ -104,7 +116,7 @@ public class Enemy : MonoBehaviour
         float temp;
         Vector3 ePos = this.GetComponent<Transform>().localPosition;    //z should have been adjusted
         temp = ePos.y;
-        ePos.y = ePos.z + 0.8f;
+        ePos.y = ePos.z + 3.2f;
         ePos.z = -temp;
         HPBar.GetComponent<Transform>().localPosition = ePos;
     }
@@ -134,14 +146,44 @@ public class Enemy : MonoBehaviour
             if (Vector3.Distance(CurPos, tPos) <= tower.range)
             {
                 //Debug.Log("Enemy " + CurPos + " tower " + tPos);
-                tower.InRange(this);
+                if (!targeted[i])
+                {
+                    tower.InRange(this);
+                }              
             }
             else
             {
-                if (targeted[i] && !tower.bulletFlying)
+                if (tower.type != 11)
                 {
-                    tower.targeting = false;
-                    targeted[i] = false;
+                    int bulletidx = 0;
+                    for(int j = 0; j < tower.bulletNum; j++)
+                    {
+                        if (tower.type == 7)
+                        {
+                            Debug.Log("idx: " + j + " bulletNum " + tower.bulletNum);
+                        }
+                        if (tower.bulletToEnemy[j] == id)
+                        {
+                            bulletidx = j;
+                            break;
+                        }
+                    }
+
+                    //Debug.Log(Map.towerNum + " " + i + "BulletNum: " + tower.bulletNum + " idx: " + bulletidx);
+                    if (targeted[i] && !tower.bulletFlying[bulletidx])
+                    {
+                        tower.targeting[bulletidx] = false;
+                        targeted[i] = false;
+                    }
+                }
+                else
+                {
+                    if (targeted[i])
+                    {
+                        tower.targeting[0] = false;
+                        targeted[i] = false;
+                        tower.DestroyBullet(0);
+                    }
                 }
             }
             i++;
@@ -164,6 +206,7 @@ public class Enemy : MonoBehaviour
             {
                 hero.targeting = false;
                 targeted[hero.id] = false;
+                hero.A.SetBool("shoot", false);
             }
         }
     }

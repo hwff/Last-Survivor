@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -40,6 +39,9 @@ public class Map : MonoBehaviour
     public GameObject rangePrefab;           //a square that show the range of a tower
     private GameObject range;
 
+    public GameObject introPerfab;
+    private GameObject intro;
+     
     private GameObject _BG;                  //the map background
 
     public TextAsset UnitFile;
@@ -55,6 +57,10 @@ public class Map : MonoBehaviour
 
         range = Instantiate(rangePrefab) as GameObject;
         range.transform.parent = transform;
+
+        intro = Instantiate(introPerfab) as GameObject;
+        intro.transform.parent = transform;
+        intro.transform.localScale = new Vector3(9.2f, 7.2f, 1.0f);
 
         _BG = GameObject.Find("BG");
         _BG.GetComponent<Transform>().localScale = new Vector3(numX * unitSizeX, numZ * unitSizeZ, 1.0f);    //set the sizes of as the sizes of the combination of all units

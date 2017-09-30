@@ -24,8 +24,11 @@ public class EnemySpawn : MonoBehaviour {
 
     public GameObject[] enemyPrefabs;
 
+    public static bool start;
+
 	// Use this for initialization
 	void Start () {
+        start = false;
 	}
 	
 	// Update is called once per frame
@@ -45,14 +48,18 @@ public class EnemySpawn : MonoBehaviour {
         ReadXml();
         wave = 1;
         Wave.wave = wave;
-        wait = 5.0f;
+        wait = 2.0f;
     }
 
     private void SpawnEnemy()
     {
         SpawnData data = EnemyDatas[idx];
 
-        wait -= Time.deltaTime;
+        if (start)
+        {
+            wait -= Time.deltaTime;
+        }
+        
         if (wait <= 0)
         {
             if (wave == data.wave)
@@ -104,4 +111,5 @@ public class EnemySpawn : MonoBehaviour {
             EnemyDatas.Add(data);
         }
     }
+
 }

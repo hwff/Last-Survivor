@@ -8,7 +8,7 @@ public class Health : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		hp = 20;
+		hp = 10;
 	}
 	
 	// Update is called once per frame

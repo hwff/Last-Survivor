@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEditor;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -20,8 +20,15 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance;
 
     public GameObject heroPrefab;
+    public GameObject[] towerPrefabs;
+    public Select[] selectPrefabs;
+    public GameObject[] effectPrefabs;
+
     [HideInInspector]
     public GameObject hero;
+
+    public Texture[] selectUI;
+    public Material[] selectMat;
 
 	// Use this for initialization
 	void Start () {
@@ -34,8 +41,6 @@ public class GameManager : MonoBehaviour {
         mapManager.GetComponent<Map>().InitMap();
         spawnManager.GetComponent<EnemySpawn>().InitEnemySpawn();
 
-        NavMeshBuilder.BuildNavMesh();
-
         hero = Instantiate(heroPrefab) as GameObject;
         Transform mTransform = mapManager.GetComponent<Transform>();
         hero.GetComponent<Transform>().parent = mTransform;
@@ -47,4 +52,11 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	}
+
+    public void begin()
+    {
+        EnemySpawn.start = true;
+        Button sb = GameObject.Find("StartButton").GetComponent<Button>();
+        sb.interactable = false; 
+    }
 }

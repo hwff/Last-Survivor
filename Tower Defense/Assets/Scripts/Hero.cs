@@ -42,6 +42,12 @@ public class Hero : MonoBehaviour
 
     private Vector3 destination;
 
+    [HideInInspector]
+    public Animator A;
+
+    private int prevdir;
+    private int preattackdir;
+
     // Use this for initialization
     void Start()
     {
@@ -54,6 +60,11 @@ public class Hero : MonoBehaviour
         bulletSpeed = level * bulletSpeed_type * 0.8f;
         targeting = false;
         bulletFlying = false;
+        A = GetComponent<Animator>();
+        prevdir = -1;
+        preattackdir = -1;
+
+        InAttackRange += OnInAttackRange;
     }
 
     // Update is called once per frame
@@ -71,12 +82,13 @@ public class Hero : MonoBehaviour
             //Debug.Log(this.GetComponent<Transform>().position + " tower attack activated!");
             target = e;
             e.targeted[id] = true;
+            A.SetBool("shoot", true);
         }
     }
 
     public void InRange(Enemy e)                    // activate
     {
-        Action<Enemy> local = OnInAttackRange;
+        Action<Enemy> local = InAttackRange;
         if (local != null)
         {
             local(e);
@@ -84,7 +96,7 @@ public class Hero : MonoBehaviour
     }
 
     private void Move()
-    { 
+    {
         if (Input.GetMouseButtonDown(0) && Unit.onType == UnitType.Path)
         {
             RaycastHit hit;
@@ -95,11 +107,104 @@ public class Hero : MonoBehaviour
             }
         }
 
-        Vector3 curPos = GetComponent<Transform>().position;
-        Vector3 dir = (destination - curPos).normalized;
+        Vector3 curPos, dir;
+        curPos = GetComponent<Transform>().position;
+        dir = (destination - curPos).normalized;
         dir.y = dir.z;
         dir.z = 0;
+
+        if (Vector3.Distance(destination, curPos) < 0.55f)
+        {
+            A.SetBool("walk", false);
+        }
+        else
+        {
+            A.SetBool("walk", true);
+        }
+
+        if (dir.y > 0 && dir.x > 0)
+        {
+            if (dir.y > dir.x)
+            {
+                setFalse(prevdir);
+                A.SetBool("back", true);
+                prevdir = 0;
+            }
+            else
+            {
+                setFalse(prevdir);
+                A.SetBool("right", true);
+                prevdir = 1;              
+            }
+        }
+        else if (dir.y > 0)
+        {
+            if (dir.y > -dir.x)
+            {
+                setFalse(prevdir);
+                A.SetBool("back", true);
+                prevdir = 0;               
+            }
+            else
+            {
+                setFalse(prevdir);
+                A.SetBool("left", true);
+                prevdir = 3;               
+            }
+        }
+        else if (dir.x > 0)
+        {
+            if (-dir.y > dir.x)
+            {
+                setFalse(prevdir);
+                A.SetBool("front", true);
+                prevdir = 2;
+            }
+            else
+            {
+                setFalse(prevdir);
+                A.SetBool("right", true);
+                prevdir = 1;
+            }
+        }
+        else if (dir.x < 0 && dir.y < 0)
+        {
+            if (dir.y < dir.x)
+            {
+                setFalse(prevdir);
+                A.SetBool("front", true);
+                prevdir = 2;
+            }
+            else
+            {
+                setFalse(prevdir);
+                A.SetBool("left", true);
+                prevdir = 3;
+            }
+        }
+
         GetComponent<Transform>().Translate(dir * speed * Time.deltaTime);
+    }
+
+    private void setFalse(int dir)
+    {
+        switch (dir)
+        {
+            case 0:
+                A.SetBool("back", false);
+                break;
+            case 1:
+                A.SetBool("right", false);
+                break;
+            case 2:
+                A.SetBool("front", false);
+                break;
+            case 3:
+                A.SetBool("left", false);
+                break;
+            default:
+                break;
+        }
     }
 
     private void Attack()
@@ -111,8 +216,8 @@ public class Hero : MonoBehaviour
                 bullet = Instantiate(bulletPrefab) as GameObject;
                 Transform bTransform = bullet.GetComponent<Transform>();
                 bTransform.parent = transform;
-                bTransform.localPosition = new Vector3(0, 0, 0);  //this number should be replace with variables, 1.8*1.5/2
-                bTransform.localScale = new Vector3(0.6f, 0.6f, 1.0f);
+                bTransform.localPosition = new Vector3(0, 1.5f, 0);  //this number should be replace with variables, 1.8*1.5/2
+                bTransform.localScale = new Vector3(1.2f, 1.5f, 1.0f);
                 bullet.GetComponent<Renderer>().material.renderQueue = 3002;
 
                 bulletFlying = true;
@@ -123,6 +228,9 @@ public class Hero : MonoBehaviour
                 {
                     Vector3 eCurPos = target.GetComponent<Transform>().position;   //parent: map
                     Vector3 tPos = bullet.GetComponent<Transform>().position;        //parent: hero
+                    Vector3 hPos = GetComponent<Transform>().position;
+
+                    SetAttackDir(eCurPos - hPos);
 
                     if (Vector3.Distance(eCurPos, tPos) > 0.2f)
                     {
@@ -130,7 +238,10 @@ public class Hero : MonoBehaviour
                         dir.y = dir.z;
                         dir.z = 0;
                         dir = dir.normalized;
-                        bullet.GetComponent<Transform>().Translate(dir * (bulletSpeed + target.speed) * Time.deltaTime);
+                        
+                        Transform bTransform = bullet.GetComponent<Transform>();
+                        bTransform.localRotation = Quaternion.FromToRotation(Vector3.right, dir);
+                        bTransform.Translate(dir * (bulletSpeed + target.speed) * Time.deltaTime, transform);
                     }
                     else
                     {
@@ -139,7 +250,7 @@ public class Hero : MonoBehaviour
                         target.SetDamage(damage);
 
                         bulletFlying = false;
-                    }
+                    }               
                 }
             }
             else
@@ -150,8 +261,94 @@ public class Hero : MonoBehaviour
             {
                 targeting = false;
                 target.targeted[id] = false;
+                A.SetBool("shoot", false);
                 Destroy(bullet);
             }
+        }
+    }
+
+    private void SetAttackDir(Vector3 dir)
+    {
+        if (dir.z > 0 && dir.x > 0)
+        {
+            if (dir.z > dir.x)
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackback", true);
+                preattackdir = 0;
+            }
+            else
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackright", true);
+                preattackdir = 1;
+            }
+        }
+        else if (dir.z > 0)
+        {
+            if (dir.z > -dir.x)
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackback", true);
+                preattackdir = 0;
+            }
+            else
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackleft", true);
+                preattackdir = 3;
+            }
+        }
+        else if (dir.x > 0)
+        {
+            if (-dir.z > dir.x)
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackfront", true);
+                preattackdir = 2;
+            }
+            else
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackright", true);
+                preattackdir = 1;
+            }
+        }
+        else if (dir.x < 0 && dir.z < 0)
+        {
+            if (dir.z < dir.x)
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackfront", true);
+                preattackdir = 2;
+            }
+            else
+            {
+                setFalse_Attack(preattackdir);
+                A.SetBool("attackleft", true);
+                preattackdir = 3;
+            }
+        }
+    }
+
+    private void setFalse_Attack(int dir)
+    {
+        switch (dir)
+        {
+            case 0:
+                A.SetBool("attackback", false);
+                break;
+            case 1:
+                A.SetBool("attackright", false);
+                break;
+            case 2:
+                A.SetBool("attackfront", false);
+                break;
+            case 3:
+                A.SetBool("attackleft", false);
+                break;
+            default:
+                break;
         }
     }
 }
