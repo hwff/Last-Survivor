@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 
+// Tower component的代码
+// 选这段代码的理由：能够体现我在设计tower这个component时考虑到的参数，用了C# event实现tower auto-attack， 还有不同类型的tower不同的攻击效果的设计
 public class Tower : MonoBehaviour
 {
     [HideInInspector]
@@ -52,7 +54,6 @@ public class Tower : MonoBehaviour
 
     private float waitforgold;
 
-    // Use this for initialization
     void Start()
     {
         
@@ -65,9 +66,9 @@ public class Tower : MonoBehaviour
         }
 
         level = 1;
-        damage = level * attackDamage_type * 4;   // this 4 may have to be tuned.
-        time = level * (1 / attackTime_type) * 1.3f;     // may be tuned
-        range = level * attackRange_type * 1.1f;  // may be tuned
+        damage = level * attackDamage_type * 4;   
+        time = level * (1 / attackTime_type) * 1.3f;     
+        range = level * attackRange_type * 1.1f;  
         bulletSpeed = level * bulletSpeed_type * 0.8f;
 
         InAttackRange += OnInAttackRange;
@@ -117,7 +118,7 @@ public class Tower : MonoBehaviour
         GenerateGold();
     }
 
-    public void InRange(Enemy e)                    // activate
+    public void InRange(Enemy e)                    
     {
         Action<Enemy> local = InAttackRange;
         if (local != null)
@@ -126,7 +127,7 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private void OnInAttackRange(Enemy e)           // reactive function
+    private void OnInAttackRange(Enemy e)           
     {
         for(int i = 0; i < bulletNum; i++)
         {
@@ -152,7 +153,7 @@ public class Tower : MonoBehaviour
                 bullets[idx] = Instantiate(bulletPrefab) as GameObject;
                 Transform bTransform = bullets[idx].GetComponent<Transform>();
                 bTransform.parent = transform;
-                bTransform.localPosition = new Vector3(0.0f, 0.3f, 0.0f);  //this number should be replace with variables, 1.8*1.5/2
+                bTransform.localPosition = new Vector3(0.0f, 0.3f, 0.0f);  
                 if (type != 11 && type != 15)
                 {
                     bTransform.localScale = new Vector3(0.5f, 0.5f, 1.0f);
